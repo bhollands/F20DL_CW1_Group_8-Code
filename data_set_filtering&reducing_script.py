@@ -1,3 +1,6 @@
+#Written by Bernard Hollands 
+
+
 import sys
 assert sys.version_info>=(3,5)
 import sklearn
@@ -16,18 +19,18 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 here = os.path.dirname(os.path.abspath(__file__))
-x_train_smpl_bin_random  = os.path.join(here, 'x_train_smpl_bin_random.csv')
-x_train_smpl_bin_random_reduced = os.path.join(here, 'x_train_smpl_bin_random_reduced.csv')
+x_train_smpl_bin_random  = os.path.join(here, 'x_train_smpl_bin.csv')
+x_train_smpl_bin_random_reduced = os.path.join(here, 'x_train_smpl_bin_reduced.csv')
 
-x_train_gr_smpl_random = os.path.join(here, 'x_train_gr_smpl_random.csv')
-x_train_gr_smpl_random_reduced = os.path.join(here, 'x_train_gr_smpl_random_reduced.csv')
+x_train_gr_smpl_random = os.path.join(here, 'x_train_gr_smpl.csv')
+x_train_gr_smpl_random_reduced = os.path.join(here, 'x_train_gr_smpl_reduced.csv')
 
 
-data = pd.read_csv(x_train_smpl_bin_random)
-#data = pd.read_csv(x_train_gr_smpl_random)
+#data = pd.read_csv(x_train_smpl_bin_random)
+data = pd.read_csv(x_train_gr_smpl_random)
 resize_length = 35
 
-num_of_rows = 2431#9691#2431
+num_of_rows = 9690#2431
 num_of_colums_original = 2304
 num_of_colums_reduced = resize_length**2
 
@@ -50,15 +53,14 @@ for j in range(num_of_rows): #replace number with num_of_rows
     #plt.imshow(image, cmap=mpl.cm.binary)
     #plt.show()
     
- 
     reduced_data_set[j] = reduced_image_vector #write the reduced image to the 2d array
 
 #print(entire_data_set)
 #normalized_data = entire_data_set/255
 #print(normalized_data)
 
-np.savetxt(x_train_smpl_bin_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
-#np.savetxt(x_train_gr_smpl_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
+#np.savetxt(x_train_smpl_bin_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
+np.savetxt(x_train_gr_smpl_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
 
 #DF = pd.DataFrame(normalized_data)
 #DF.to_csv(reduced_data_csv)
