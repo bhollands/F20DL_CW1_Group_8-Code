@@ -57,6 +57,7 @@ for j in range(num_of_rows): #replace number with num_of_rows
 
 #print(entire_data_set)
 #normalized_data = entire_data_set/255
+#bernie smellz (big_data)
 #print(normalized_data)
 
 #np.savetxt(x_train_smpl_bin_random_reduced, reduced_data_set, delimiter=',', fmt='%d')

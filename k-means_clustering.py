@@ -23,9 +23,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 #Import all the data
-here = os.path.dirname(os.path.abspath(__file__))
-x_train_smpl_bin_random  = os.path.join(here, 'x_train_smpl_bin_random.csv')
-x_train_smpl_bin_random_reduced = os.path.join(here, 'x_train_smpl_bin_random_reduced.csv')
+data_path = os.path.dirname(os.path.abspath(__file__))
 
-x_train_gr_smpl_random = os.path.join(here, 'x_train_gr_smpl_random.csv')
-x_train_gr_smpl_random_reduced = os.path.join(here, 'x_train_gr_smpl_random_reduced.csv')
+x_train_gr_smpl_random_reduced = os.path.join(data_path, 'x_train_gr_smpl_random_reduced.csv') #imports the dataset that needs to be clustered
+data = pd.read_csv(x_train_gr_smpl_random_reduced)
+
+def plot_clusters(X,y=none)
