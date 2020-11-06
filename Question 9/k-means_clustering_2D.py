@@ -19,7 +19,7 @@ import numpy as np
 import os
 import cv2
 import pandas as pd
-#np.random.seed(42)
+np.random.seed(42)
 #to plot pretty sigures
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -67,46 +67,30 @@ for label in range(10):
     x_train_tmp = x_train_emb3#[y_train_sm == label]
    ''' 
 
-
-x_train_emb2 = re_dimension(x_train_sm,2)
-#plot_data_2d(x_train_emb2)
-k = 10
-kmeans = KMeans(n_clusters=k, random_state=42)
-y_pred = kmeans.fit_predict(x_train_emb2)
-y_pred
-y_pred is kmeans.labels_
-
-
 def plot_centroids(centriods, weights=None, circle_color='w', cross_color='k'):
     if weights is not None:
         centriods = centriods[weights > weights.max() / 10]
     plt.scatter(centriods[:, 0], centriods[:, 1],
-    marker='o', s=30, linewidths=8, color=circle_color, zonder=10, alpha=0.9)
+    marker='o', s=30, linewidths=4, color=circle_color, zorder=10, alpha=0.9)
     plt.scatter(centriods[:, 0], centriods[:, 1],
-    marker='x', s=50, linewidths=8, color=circle_color, zonder=11, alpha=1)
+    marker='x', s=50, linewidths=4, color=circle_color, zorder=11, alpha=1)
 
 
 def plot_decision_boundaries(clusterer, X, resolution=1000, show_centriods=True, 
                                 show_xlabels=True, show_ylabels=True):
     mins = X.min(axis=0) - 0.1
     maxs = X.max(axis=0) + 0.1
-    print("1")
     xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], resolution),
                          np.linspace(mins[1], maxs[1], resolution))
-    xx = xx.astype(np.double)
-    yy = yy.astype(np.double)
-    print("2")
+
     z = clusterer.predict(np.c_[xx.ravel(), yy.ravel()])
-    print("2.5")
     z = z.reshape(xx.shape)
-    print("3")
-    plt.contourf(z, extent=(mins[0], maxs[0], mins[1],maxs[1]), cmap="Paste12")
+
+    plt.contourf(z, extent=(mins[0], maxs[0], mins[1],maxs[1]), cmap='Pastel2')
     plt.contour(z, extent=(mins[0], maxs[0], mins[1], maxs[1]), linewidths=1, colors='k')
     plot_data_2d(X)
-    print("4")
     if show_centriods:
         plot_centroids(clusterer.cluster_centers_)
-
     if show_xlabels:
         plt.xlabel("$x_1$", fontsize=14)
     else:
@@ -116,11 +100,39 @@ def plot_decision_boundaries(clusterer, X, resolution=1000, show_centriods=True,
     else:
         plt.tick_params(labelleft=False)
 
+def plot_boundaries_graph(X, clusterer):
+    plt.figure(figsize=(8,4))
+    plot_decision_boundaries(clusterer, X)  
+    plt.show()
 
-plt.figure(figsize=(8,4))
+x_train_emb2 = re_dimension(x_train_sm,2)
 
-#print(arr.dtype)
-plot_decision_boundaries(kmeans, x_train_emb2)
+
+k = 10
+kmeans = KMeans(n_clusters=k, random_state=42)
+y_pred = kmeans.fit_predict(x_train_emb2.astype('double'))
+y_pred
+y_pred is kmeans.labels_
+
+#plot_boundaries_graph(x_train_emb2, kmeans)
+
+print(kmeans.inertia_)
+X_dist = kmeans.transform(x_train_emb2.astype('double'))
+np.sum(X_dist[np.arange(len(X_dist)), kmeans.labels_]**2)
+print(kmeans.score(x_train_emb2.astype('double')))
+
+##Finding optimal clusters
+'''
+kmeans_per_k = [KMeans(n_clusters=k, random_state=42).fit(x_train_emb2.astype('double'))
+                for k in range(1, 10)]
+inertias = [model.inertia_ for model in kmeans_per_k]
+
+
+
+#plt.plot(range(1, 10), inertias, "bo-")
+plt.xlabel("$k$", fontsize=14)
+plt.ylabel("Inertia", fontsize=14)
+
+plt.axis([-5000, 5000, 0, 100000])
 plt.show()
-
-
+'''
