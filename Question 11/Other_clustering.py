@@ -76,7 +76,7 @@ def Spectral_Clustering():
     plt.title("Spectral Clustering")
     plt.show()
 
-
+Spectral_Clustering()
 
 
 #scaled_X = scalar.transform(x_train_2d)
