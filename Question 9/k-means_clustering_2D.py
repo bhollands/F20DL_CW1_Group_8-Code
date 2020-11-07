@@ -1,5 +1,5 @@
-#Written by Bernard Hollands
-#https://blog.galvanize.com/introduction-k-means-cluster-analysis/
+#Written by Bernard Hollands for F20DL CW 1
+
 '''
 9. Cluster  the  data  sets  train_smpl, train_smpl_<label>  (apply  required  filters and/or attribute selections if needed), using the k-means algorithm:
     •First  try  to  work  in  a  classical  clustering  scenario  and  assume  that  classes  are  not  given.  Research methods which allow you to visualise and analyse clusters (and the performance of the clustering algorithm on your data set).
@@ -10,7 +10,9 @@ assert sys.version_info>=(3,5)
 import sklearn
 assert sklearn.__version__>="0.20"
 from sklearn.model_selection import train_test_split
+
 from sklearn.manifold import TSNE
+
 from sklearn.cluster import KMeans
 
 
@@ -23,7 +25,6 @@ np.random.seed(42)
 #to plot pretty sigures
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 #Import all the data
 
@@ -51,35 +52,28 @@ def re_dimension(X, no_of_dim):
     x_train_emb = TSNE(n_components=no_of_dim, perplexity=35).fit_transform(X)
     return x_train_emb
 
-def plot_clusters_3d(X):
-    fig = plt.figure()
-    ax = Axes3D(fig)
-    ax.scatter(X[:,0], X[:,1], alpha = 0.75)
-    ax.legend
-    plt.show()
-
 def plot_data_2d(X):
-    plt.scatter(X[:,0], X[:,1], alpha = 0.75)
+    plt.scatter(X[:,0], X[:,1], alpha = 0.75, s = 10)
+    plt.title("German Street Signs")
+    plt.legend()
     #plt.show()
-'''
-for label in range(10):
-    print(y_train_sm == label)
-    x_train_tmp = x_train_emb3#[y_train_sm == label]
-   ''' 
 
-def plot_centroids(centriods, weights=None, circle_color='w', cross_color='k'):
+
+
+def plot_centroids(centriods, weights=None, circle_color='r', cross_color='k'):
     if weights is not None:
         centriods = centriods[weights > weights.max() / 10]
     plt.scatter(centriods[:, 0], centriods[:, 1],
-    marker='o', s=30, linewidths=4, color=circle_color, zorder=10, alpha=0.9)
-    plt.scatter(centriods[:, 0], centriods[:, 1],
-    marker='x', s=50, linewidths=4, color=circle_color, zorder=11, alpha=1)
+    marker='x', s=60, linewidths=2, color=circle_color, zorder=5, alpha=0.9)
+    #plt.scatter(centriods[:, 0], centriods[:, 1],
+    #marker='x', s=10, linewidths=2, color=circle_color, zorder=11, alpha=1)
 
-
+#Function taken from tutorial
 def plot_decision_boundaries(clusterer, X, resolution=1000, show_centriods=True, 
                                 show_xlabels=True, show_ylabels=True):
     mins = X.min(axis=0) - 0.1
     maxs = X.max(axis=0) + 0.1
+    '''
     xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], resolution),
                          np.linspace(mins[1], maxs[1], resolution))
 
@@ -88,6 +82,7 @@ def plot_decision_boundaries(clusterer, X, resolution=1000, show_centriods=True,
 
     plt.contourf(z, extent=(mins[0], maxs[0], mins[1],maxs[1]), cmap='Pastel2')
     plt.contour(z, extent=(mins[0], maxs[0], mins[1], maxs[1]), linewidths=1, colors='k')
+    '''
     plot_data_2d(X)
     if show_centriods:
         plot_centroids(clusterer.cluster_centers_)
@@ -105,16 +100,18 @@ def plot_boundaries_graph(X, clusterer):
     plot_decision_boundaries(clusterer, X)  
     plt.show()
 
-x_train_emb2 = re_dimension(x_train_sm,2)
+x_train_emb2 = re_dimension(x_train,2)
 
 
-k = 10
+k = 6
 kmeans = KMeans(n_clusters=k, random_state=42)
 y_pred = kmeans.fit_predict(x_train_emb2.astype('double'))
 y_pred
 y_pred is kmeans.labels_
 
-#plot_boundaries_graph(x_train_emb2, kmeans)
+
+plot_data_2d(x_train_emb2)
+plot_boundaries_graph(x_train_emb2, kmeans)
 
 print(kmeans.inertia_)
 X_dist = kmeans.transform(x_train_emb2.astype('double'))
@@ -122,17 +119,16 @@ np.sum(X_dist[np.arange(len(X_dist)), kmeans.labels_]**2)
 print(kmeans.score(x_train_emb2.astype('double')))
 
 ##Finding optimal clusters
-'''
+
 kmeans_per_k = [KMeans(n_clusters=k, random_state=42).fit(x_train_emb2.astype('double'))
-                for k in range(1, 10)]
+                for k in range(1, 15)]
 inertias = [model.inertia_ for model in kmeans_per_k]
 
 
 
-#plt.plot(range(1, 10), inertias, "bo-")
+plt.plot(range(1, 15), inertias, "bo-")
 plt.xlabel("$k$", fontsize=14)
 plt.ylabel("Inertia", fontsize=14)
 
-plt.axis([-5000, 5000, 0, 100000])
+plt.axis([-1, 16, -1000, 9000000])
 plt.show()
-'''
