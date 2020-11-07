@@ -7,12 +7,13 @@ assert sys.version_info >= (3, 5)
 # assert sklearn.__version__ >= "0.20"
 
 # # Common imports
-# import numpy as np
+import numpy as np
 # import os
 # import tarfile
 # import urllib
 # import pandas as pd
 import csv
+import math
 
 # To plot pretty figures
 # import matplotlib as mpl
@@ -32,7 +33,7 @@ lbl_data = "y_train_smpl_random.csv"
 #         - Locate and store the positions of each class label in y_train in separate arrays
 #         - Filter through x_train data to locate and store the correct images for each class into their class array, using the positions
 
-# Step 2: For each class, find and record the top 10 pixels in order of absolute correlation value
+# Step 2: For each class, find and record the top 10 pixels of each image, in order of absolute correlation value
 
 l0 = []
 l1 = []
@@ -47,79 +48,64 @@ l9 = []
 
 f = open(img_data, "r", encoding='utf-8')
 imgs = csv.reader(f, quotechar='"')
-img_list = list(imgs)
+imgs = list(imgs)
+
+# Fixing problem where first image contains some float values, convert to int
+imgs[0] = [float(x) for x in imgs[0]]
+imgs[0] = [int(x) for x in imgs[0]]
+
+# Convert all the image data from string to int
+for i in range(9690):
+    imgs[i] = [int(x) for x in imgs[i]]
 
 f = open(lbl_data, "r", encoding='utf-8')
 labels = csv.reader(f, quotechar='"')
 
 i = 0
 for label in labels:
-    # if i == 9690:
-        # break
     if label[0] == '0':
-        l0.append(img_list[i])
-        print(i)
+        l0.append(imgs[i])
     if label[0] == '1':
-        l1.append(img_list[i])
-        print(i)
+        l1.append(imgs[i])
     if label[0] == '2':
-        l2.append(img_list[i])
-        print(i)
+        l2.append(imgs[i])
     if label[0] == '3':
-        l3.append(img_list[i])
-        print(i)
+        l3.append(imgs[i])
     if label[0] == '4':
-        l4.append(img_list[i])
-        print(i)
+        l4.append(imgs[i])
     if label[0] == '5':
-        l5.append(img_list[i])
-        print(i)
+        l5.append(imgs[i])
     if label[0] == '6':
-        l6.append(img_list[i])
-        print(i)
+        l6.append(imgs[i])
     if label[0] == '7':
-        l7.append(img_list[i])
-        print(i)
+        l7.append(imgs[i])
     if label[0] == '8':
-        l8.append(img_list[i])
-        print(i)
+        l8.append(imgs[i])
     if label[0] == '9':
-        l9.append(img_list[i])
-        print(i)
+        l9.append(imgs[i])
     i+=1
 
+class0 = np.array(l0)
+class1 = np.array(l1)
+class2 = np.array(l2)
+class3 = np.array(l3)
+class4 = np.array(l4)
+class5 = np.array(l5)
+class6 = np.array(l6)
+class7 = np.array(l7)
+class8 = np.array(l8)
+class9 = np.array(l9)
 
-# f = open(file, "r", encoding='utf-8')
-# reader = csv.reader(f, quotechar='"')
+print(class0[0])
 
-# img_list = list(reader)
-# print(img_list[0])
-
-# img_list = list(lbl_reader)
-# print(int(img_list[0][0]))
+# For each image in each class, find the top 10 pixels correlating with the class
 
 
-# for row in reader:
-#     print(row)
 
-# 9690/1(?) images - 10 classes (0-9)
 
-# Class 0 - 211 images
+# feature = classx[0][i]
+# corr = pearsonr(list(feature),list(x))
+# corrs0.append((float(feature), corr))
 
-# Class 1 - 2220 images
-
-# Class 2 - 2250 images
-
-# Class 3 - 1410 images
-
-# Class 4 - 1980 images
-
-# Class 5 - 210 images
-
-# Class 6 - 360 images
-
-# Class 7 - 240 images
-
-# Class 8 - 540 images
-
-# Class 9 - 270 images
+# corrs0 = sorted(corrs0, key=float)
+# corrs0 = corrs0[:10]
