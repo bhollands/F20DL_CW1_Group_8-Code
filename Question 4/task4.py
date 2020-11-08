@@ -3,28 +3,24 @@ assert sys.version_info >= (3, 5)
 # Python ≥3.5 is required
 
 # Scikit-Learn ≥0.20 is required
-# import sklearn
-# assert sklearn.__version__ >= "0.20"
+import sklearn
+assert sklearn.__version__ >= "0.20"
 
 # Common imports
 import numpy as np
-# import os
-# import tarfile
-# import urllib
-# import pandas as pd
+import os
+import tarfile
+import urllib
+import pandas as pd
 import pandas as pd
 import csv
 import math
-from scipy.stats import pearsonr
-  
-# To plot pretty figures
-# import matplotlib as mpl
-# import matplotlib.pyplot as plt
 
-# Import the data here
+# Import the data here - images and labels
 img_data = "x_train_gr_smpl_random_reduced.csv"
 lbl_data = "y_train_smpl_random.csv"
 
+# Open the files using csv reader and then convert them to lists
 f = open(lbl_data, "r", encoding='utf-8')
 labels = csv.reader(f, quotechar='"')
 labels = list(labels)
@@ -37,7 +33,8 @@ imgs = list(imgs)
 imgs[0] = [float(x) for x in imgs[0]]
 imgs[0] = [int(x) for x in imgs[0]]
 imgs[0] = [str(x) for x in imgs[0]]
-  
+
+# Creating 10 different lists for each class, to store each image
 l0 = []
 l1 = []
 l2 = []
@@ -49,6 +46,7 @@ l7 = []
 l8 = []
 l9 = []
 
+# Top 20 attributes from Weka
 # Class 0 - 714,542,507,749,577,680,783,784,748,545,580,822,818,715,19,679,54,471,615,55
 # Class 1 - 542,646,541,752,577,576,717,611,786,506,682,793,681,751,645,545,819,792,783,510
 # Class 2 - 319,284,285,320,249,318,283,248,353,247,354,214,250,317,421,352,386,286,282,213
@@ -59,6 +57,12 @@ l9 = []
 # Class 7 - 648,583,642,405,607,613,406,618,548,441,573,676,369,677,619,440,649,726,370,547
 # Class 8 - 406,642,405,677,583,607,370,548,441,676,711,573,619,572,400,641,369,726,608,401
 # Class 9 - 642,677,607,618,860,583,676,824,573,572,582,641,401,825,440,547,608,711,859,653
+
+# Iterate through each label in the labels file, identify the class and by using the index i, take the selected attributes
+# of ith image and store them in the list corresponding to the class. Increase the index after each iteration.
+
+# x_train and y_train data has been randomised with the same seed, so both the image and its corresponding
+# class label will have the same i-th position in the respective files.
 
 # Top 5 features per class  
 i = 0
@@ -94,9 +98,11 @@ for label in labels:
         l9.append([imgs[i][642],imgs[i][677],imgs[i][607],imgs[i][618],imgs[i][860]])
     i+=1
 
+# Create the dataset composing of all lists containing the selected attributes
 dataset1 = l0+l1+l2+l3+l4+l5+l6+l7+l8+l9
 columns = [str(x) for x in range(5)]
 
+# Create a pandas DataFrame to hold the dataset information, then export to a csv file
 df1 = pd.DataFrame(dataset1, columns=columns)
 print(df1.head())
 df1.to_csv('/Users/Perry/Documents/GitHub/F20DL_CW1_Group_8-Code/Question 5/train_sampl_1.csv', index=False, header=False)
