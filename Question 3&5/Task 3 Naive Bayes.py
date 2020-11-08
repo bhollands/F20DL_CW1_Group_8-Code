@@ -6,7 +6,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-image_data = "x_train_gr_smpl_random_reduced.csv"
+val = int(input("Which file do you want classified? 1 for Q3, 2 for Q5.1, 3 for Q5.2 and 4 for Q5.3: "))
+image_data = ""
+
+if val == 1:
+    image_data = "x_train_gr_smpl_random_reduced.csv"
+    
+elif val == 2:
+    image_data = "train_sampl_1.csv"
+    
+elif val == 3:
+    image_data = "train_sampl_2.csv"
+elif  val == 4:
+    image_data = "train_sampl_3.csv"
+    
+print(val)
+print(image_data)
+
 label_data = "y_train_smpl_random.csv"
 
 #reads the data from the files
@@ -21,11 +37,11 @@ X= df1.values
 #ravel flattens the labels array into a one dimensional array
 Y= df2.values.ravel()
 
-#Preprocessing to check if the datatypes and arrays are ready to use
+# Preprocessing to check if the datatypes and arrays are ready to use
 print(X.dtype, Y.dtype)
 print(X.shape, Y.shape)
 
-#Trains the model for 70% of the images array and 30% of the labels
+# Trains the model for 70% of the images array and 30% of the labels
 from sklearn.model_selection import train_test_split
 train_X, test_X, train_Y, test_Y = train_test_split(X, Y)
 
@@ -78,9 +94,9 @@ elif dataset == 'train_sampl_2.csv':
 elif  dataset == 'train_sampl_3.csv':
     plot_images(test_X[p].reshape(-1, 4, 4), predictions[p])
 
-    ycount = np.ones((10))
+ycount = np.ones((10))
 
-    #Calculates the probablities of each class
+#Calculates the probablities of each class
 for x, y in zip(X, Y):
     y1 = int(y)
     ycount[y1] += 1
@@ -90,6 +106,7 @@ py = (ycount/ ycount.sum()) * 100
 print('Probablities', py)
 
 classifier = clas
+
 np.set_printoptions(precision=2)
 
 # Plot non-normalized confusion matrix
@@ -107,3 +124,4 @@ for title, normalize in titles_options:
     print(disp.confusion_matrix)
 
 plt.show()
+
