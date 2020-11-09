@@ -1,22 +1,16 @@
 #Written by Bernard Hollands for F20DL CW 1
 
-#Written by Bernard Hollands for F20DL CW 1
-
-'''
-9. Cluster  the  data  sets  train_smpl, train_smpl_<label>  (apply  required  filters and/or attribute selections if needed), using the k-means algorithm:
-    •First  try  to  work  in  a  classical  clustering  scenario  and  assume  that  classes  are  not  given.  Research methods which allow you to visualise and analyse clusters (and the performance of the clustering algorithm on your data set).
-    •Note the accuracy of k-means relative to the given clusters
-'''
 import sys
 assert sys.version_info>=(3,5)
 import sklearn
 assert sklearn.__version__>="0.20"
 from sklearn.model_selection import train_test_split
-from sklearn.cluster import SpectralClustering
-from sklearn.manifold import TSNE
 
-from sklearn import mixture
-
+#clustering imports
+from sklearn.cluster import SpectralClustering #import spectral clustering
+from sklearn.mixture import GaussianMixture #import the Gaussian Mixture Model
+from sklearn.metrics import accuracy_score #import the accuracy score
+from sklearn.manifold import TSNE #to reduce the dimensionality of the data
 
 # common imports
 import numpy as np 
@@ -26,58 +20,87 @@ import pandas as pd
 np.random.seed(42)
 
 #to plot pretty sigures
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
 #Import all the data
 
-y_train_smpl = "x_train_gr_smpl_random_reduced.csv"#os.path.join(data_path, 'y_train_smpl_random.csv')#y data
-x_train_smpl = "y_train_smpl_random.csv"#os.path.join(data_path, 'x_train_gr_smpl_random_reduced.csv') #x data
+x_train_smpl = "x_train_gr_smpl_random_reduced.csv"# file path of the data
+y_train_smpl = "y_train_smpl_random.csv" #file path for the classification data
 
 x_data = pd.read_csv(x_train_smpl) #read the data from the files
-y_data = pd.read_csv(y_train_smpl)
+y_data = pd.read_csv(y_train_smpl) #read the classification file
 
-df1 = pd.DataFrame(x_data)
-df2 = pd.DataFrame(y_data)
+df1 = pd.DataFrame(x_data) # turn into a pandas dataframe
+df2 = pd.DataFrame(y_data) # turn into a pandas dataframe
 
-x_data_array = df1.values#turn dataframe to numpy array
-y_data_array = df2.values
+#print(df2)
+x_data_array = df1.values #turn dataframe to numpy array
+y_data_array = df2.values 
 
-x_train = x_data_array.astype('float') / 255
-y_train = x_data_array.astype('float') /255
 
-x_train_sm, _, y_train_sm, _  = train_test_split( #only using 5% of the dataset for speed
-    x_train, y_train, test_size= .85
+x_train = x_data_array.astype('float') / 255 #normalise image data to be between 0 and 1
+y_train = y_data_array.astype('int') #turn classification data into an interger for accuracy_score
+
+x_train_sm, _, y_train_sm, _  = train_test_split( #option to only use any% of the data for quicker testing
+    x_train, y_train, test_size= .95
 )
 
+#modified from tutorial 4
+def plot_centroids(centroids, weights=None, circle_color='r', cross_color='k'):
+    if weights is not None:
+        centroids = centroids[weights > weights.max() / 10]
+    plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='x', s=30, linewidths=8,
+                color=circle_color, zorder=10, alpha=0.9)
+        
 
-def re_dimension(X, no_of_dim):
-    x_train_emb = TSNE(n_components=no_of_dim, perplexity=35).fit_transform(X)
-    return x_train_emb
+def re_dimension(X, no_of_dim): #method for reducing the dimensioanlty of data
+    x_train_low_dim = TSNE(n_components=no_of_dim, perplexity=35).fit_transform(X) #pass teh data through TSNE algorithum
+    return x_train_low_dim
 
-def plot_data_2d(X):
+def plot_data_2d(X): #plot any 2d data on a scatter plot
     plt.scatter(X[:,0], X[:,1], alpha = 0.75, s = 10)
     plt.title("German Street Signs")
     plt.legend()
     plt.show()
 
 
-def Spectral_Clustering():
-    x_train_2d = re_dimension(x_train,2)
-    #transform data such that the distribution = 0 and std = 1
-    model = SpectralClustering(n_clusters = 10)
-    yhat = model.fit_predict(x_train_2d)
-    clusters = np.unique(yhat)
-    for cluster in clusters:
+def Spectral_Clustering(X, k):
+    model = SpectralClustering(n_clusters = k) #make the model precral clustering with k clusters
+    yhat = model.fit_predict(X) #run the data on the spectral cluster
+    clusters = np.unique(yhat) #make an array of only unique clusters
+    for cluster in clusters:# loop throgh all clusters and plot them
         row_ix = np.where(yhat == cluster)
-        plt.scatter(x_train_2d[row_ix, 0], x_train_2d[row_ix, 1])
+        plt.scatter(X[row_ix, 0], X[row_ix, 1], s = 10)
+    plt.title("Spectral Clustering") #title the plot
+    plt.show() #show the plot
 
-    plt.title("Spectral Clustering")
+def Gaussian_Mixture_model(X, k):
+    model = GaussianMixture(n_components=k) #assign model to the gaussian mixture
+    model.fit_predict(X) #run the data on the GMM
+    yhat = model.predict(X) #assign yhat the labeled points
+    clusters = np.unique(yhat) #make array of only unique clusters
+    for cluster in clusters: #loop throught eclusters and plot them
+        row_ix = np.where(yhat == cluster)
+        plt.scatter(X[row_ix, 0], X[row_ix, 1], s= 5)
+    
+    print("GMM Accuracy")
+    print(accuracy_score(yhat, y_train)) # calcuate the accuracy of the clustering
+    plt.title("Gaussians Mixture Model")
     plt.show()
 
-Spectral_Clustering()
 
 
-#scaled_X = scalar.transform(x_train_2d)
+def main(): #main method to run each cluster
+    x_train_2d = re_dimension(x_train_sm,2)
+    Gaussian_Mixture_model(x_train_2d, 10)
+    Spectral_Clustering(x_train_2d, 10)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
 

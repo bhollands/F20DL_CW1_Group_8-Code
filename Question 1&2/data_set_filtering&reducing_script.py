@@ -18,54 +18,38 @@ np.random.seed(42)
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+#define te file paths
 here = os.path.dirname(os.path.abspath(__file__))
-x_train_smpl_bin_random  = os.path.join(here, 'x_train_smpl_bin.csv')
-x_train_smpl_bin_random_reduced = os.path.join(here, 'x_train_smpl_bin_reduced.csv')
+x_train_smpl_bin_random  = os.path.join(here, 'x_train_smpl_bin_random.csv')
+x_train_smpl_bin_random_reduced = os.path.join(here, 'x_train_smpl_bin__random_reduced.csv')
 
 x_train_gr_smpl_random = os.path.join(here, 'x_train_gr_smpl_random.csv')
-x_train_gr_smpl_random_reduced = os.path.join(here, 'x_train_gr_smpl_reduced.csv')
+x_train_gr_smpl_random_reduced = os.path.join(here, 'x_train_gr_smpl_random_reduced.csv')
 
 
-#data = pd.read_csv(x_train_smpl_bin_random)
-data = pd.read_csv(x_train_gr_smpl_random)
-resize_length = 35
+#data = pd.read_csv(x_train_smpl_bin_random) #read in the data from the csv
+data = pd.read_csv(x_train_gr_smpl_random) #read in the data from the csv
+resize_length = 35 #define the new length length and width of the images
 
-num_of_rows = 9690#2431
-num_of_colums_original = 2304
-num_of_colums_reduced = resize_length**2
-
+num_of_rows = 9690#2431 #define the number of rows in the data file
+num_of_colums_original = 2304 #define the number of columns in the data
+num_of_colums_reduced = resize_length**2 #the number of colmns is the length squared
 
 row = np.empty(num_of_colums_original) #row needs to be as long as the number of columbs
 
 reduced_data_set = np.zeros(shape=(num_of_rows,num_of_colums_reduced)) #2D array to store entire set
 
 
-for j in range(1):#num_of_rows): #replace number with num_of_rows
-    print(j)
-    for i in range(num_of_colums_original):
-        row[i] = data[str(i)][j] #have this array, need to put into 2D according to larger for loop
-    
-    #plt.imshow(row, cmap=mpl.cm.binary)
-    #plt.show()
-    image = cv2.resize(row.reshape(48,48), dsize=(resize_length,resize_length)) #re-size the images
+for j in range(num_of_rows): #go through all the rows in the file
+    print(j) #show the under progress throught the file
+    for i in range(num_of_colums_original): #go through all of the colmns in the data
+        row[i] = data[str(i)][j] #create an array with the data from each colmn of a specific row
 
-    reduced_image_vector = image.reshape(1,num_of_colums_reduced) #set the reduced image to a vector again
-    plt.imshow(image, cmap=mpl.cm.binary)
-    plt.show()
-    
+    image = cv2.resize(row.reshape(48,48), dsize=(resize_length,resize_length)) #reduce the size of the image
+    reduced_image_vector = image.reshape(1,num_of_colums_reduced) #make the reduced image a vector image agains
     reduced_data_set[j] = reduced_image_vector #write the reduced image to the 2d array
 
-#print(entire_data_set)
-#normalized_data = entire_data_set/255
-#bernie smellz (big_data)
-#print(normalized_data)
-'''
-#np.savetxt(x_train_smpl_bin_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
-np.savetxt(x_train_gr_smpl_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
-'''
-#DF = pd.DataFrame(normalized_data)
-#DF.to_csv(reduced_data_csv)
 
+np.savetxt(x_train_smpl_bin_random_reduced, reduced_data_set, delimiter=',', fmt='%d') #save the 2D array as a csv file
+#np.savetxt(x_train_gr_smpl_random_reduced, reduced_data_set, delimiter=',', fmt='%d')
 
-#row_image = row.reshape(48,48)
-#plt.imshow(row_image, cmap=mpl.cm.binary)
