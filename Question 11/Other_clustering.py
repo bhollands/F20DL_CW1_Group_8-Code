@@ -1,4 +1,5 @@
 #Written by Bernard Hollands for F20DL CW 1
+#https://scikit-learn.org/stable/modules/clustering.html
 
 import sys
 assert sys.version_info>=(3,5)
