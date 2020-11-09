@@ -113,6 +113,9 @@ np.set_printoptions(precision=2)
 from sklearn.metrics import plot_confusion_matrix
 titles_options = [("Confusion matrix, without normalization", None),
                   ("Normalized confusion matrix", 'true')]
+#Equivalent of using .target_name as numpy arrays dont have a target names method
+labels=np.unique(predictions)
+
 for title, normalize in titles_options:
     disp = plot_confusion_matrix(classifier, test_X, test_Y,
                                  display_labels=Y,
